@@ -1,0 +1,140 @@
+mod.controller('MenuCtrl', function ($scope, $http, $q, $location)
+{
+	var width = window.innerWidth - 46;
+
+	$('#menu').width(width);
+
+	$scope.go = function (path)
+	{
+		console.log(path);
+		$location.url(path);
+
+
+		console.log('menu!');
+		var page = $('.app-page'),
+			trans = window.innerWidth - 46,
+			transString = 'translate3d(' + trans + 'px, 0, 0)';
+
+		console.log('menu button clicked');
+		console.log(transString);
+
+
+		if (page.hasClass('nav-active')) {
+			if (isIE()) {
+				page.css({
+					left: 'auto'
+				});
+			}
+			else {
+				page.css({
+					'-webkit-transform': 'translate3d(0, 0, 0)',
+					'-moz-transform': 'translate3d(0, 0, 0)',
+					'transform': 'translate3d(0, 0, 0)'
+				});
+			}
+			page.removeClass('nav-active');
+		}
+		else {
+			if (isIE()) {
+				page.css({
+					left: trans
+				});
+			} else {
+				page.css({
+					'-webkit-transform': transString,
+					'-moz-transform': transString,
+					'transform': transString
+				});
+			}
+			page.addClass('nav-active');
+		}
+
+	};
+
+	$scope.closeMenu = function() {
+
+	};
+
+	$scope.logout = function ()
+	{
+		var dfd = $q.defer();
+		$http({
+			url: '../../api/logout'
+		})
+			.success(function ()
+			{
+				location.reload();
+			});
+	};
+
+
+})
+	.controller('MenuLocationCtrl', function ($scope, locationService)
+	{
+		$scope.location = {
+			current: locationService.location.string,
+			count: 1
+		}
+	})
+	.controller('MenuListsCtrl', function ($scope, listService)
+	{
+		var list = listService.data;
+		$scope.listCount = list.attributes.quantity;
+	})
+	.controller('MenuProfileCtrl', function ($scope, $http, $q, $accountsService)
+	{
+		console.log($accountsService.getUser());
+		$scope.user = $accountsService.getUser();
+
+		console.log($scope.user.email === "update@ostosnero.com");
+
+		if ($scope.user.email === "update@ostosnero.com") {
+			$scope.user.avatar_url = "./images/mikko.jpg";
+		} else {
+			$scope.user.avatar_url = "./images/avatar-placeholder.png";
+		}
+		if($scope.user.stats.shopping_trips == null) $scope.user.stats.shopping_trips = 0;
+
+		$scope.saved = "...";
+
+		function _getStats()
+		{
+			var dfd = $q.defer();
+
+			$http({
+				url: '../../api/get-stats/',
+				method: 'get',
+				params: {stat: 'savedHistory'}
+			})
+				.success(function (data)
+				{
+					console.log(data);
+					if (!!data.error) {
+						dfd.reject(data.error)
+					}
+					else {
+						dfd.resolve(data);
+					}
+				})
+				.error(function(reason) {
+					dfd.reject(reason);
+				});
+
+
+			return dfd.promise;
+		}
+
+
+
+		_getStats().then(
+			function(data) {
+				$scope.user.saved = $scope.$formatPrice(data.total_saved);
+			},
+			function(reason) {
+				console.error(reason);
+			}
+		);
+
+
+
+	});
