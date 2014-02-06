@@ -66,14 +66,8 @@ mod.controller('MenuCtrl', function ($scope, $http, $q, $location, $accountsServ
 	.controller('MenuLocationCtrl', function ($scope, locationService)
 	{
 		$scope.location = {
-			current: locationService.location.string,
-			count: 1
+			current: locationService.location.string
 		}
-	})
-	.controller('MenuListsCtrl', function ($scope, listService)
-	{
-		var list = listService.data;
-		$scope.listCount = list.attributes.quantity;
 	})
 	.controller('MenuProfileCtrl', function ($scope, $http, $q, $accountsService)
 	{

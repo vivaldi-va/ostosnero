@@ -22,13 +22,13 @@
 			</div>
 		</div>
 	</div>
-    <div class="app-menu-item" ng-click="go('/list')" ng-controller="MenuListsCtrl">
+    <div class="app-menu-item" ng-click="go('/list')">
         <div class="app-menu-item-icon-wrapper"><i class="icon-list"></i></div>
         <div class="app-menu-item-text-wrapper">
             Ostoslista
         </div>
         <div class="app-menu-item-notification">
-            <b class="notification inverse">{{ listCount }}</b>
+            <b class="notification inverse">{{ list.attrs.count }}</b>
         </div>
     </div>
     <div class="app-menu-item location-menu-item" ng-click="go('/location')" ng-controller="MenuLocationCtrl">
