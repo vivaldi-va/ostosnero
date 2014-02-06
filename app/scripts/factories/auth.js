@@ -88,42 +88,47 @@ fac.factory('$accountsService', function ($rootScope, $http, $q, $log) {
 		});
 	}
 
+	function _signup(email, username, pass) {
+		var dfd = $q.defer();
+
+		$http({
+			url: '../../api/user/register',
+			method: 'POST',
+			data: {email: email, name: username, password: pass}
+		})
+			.success(function (data) {
+
+				if(!data.success) {
+					dfd.reject(data.error);
+				}
+
+				mixpanel.track("New user registration", {
+					"$email": email,
+					"name": username
+				});
+
+				mixpanel.identify(email);
+				mixpanel.people.set({
+					"$name": username,
+					"$email": email,
+					"$joined": new Date(),
+					"$last_login": new Date()
+				});
+				dfd.resolve(data);
+			})
+			.error(function (reason) {
+				$log.warn('ERR:', reason);
+				dfd.reject(reason);
+			});
+
+		return dfd.promise;
+	}
+
 	return {
 		session: _session,
 		login: _login,
 		logout: _logout,
-		signup: function (email, username, pass) {
-			var dfd = $q.defer();
-
-			$http({
-				url: '../../api/register/',
-				method: 'GET',
-				params: {email: email, name: username, pass: pass}
-			})
-				.success(function (data) {
-					console.log(data);
-
-					mixpanel.track("New user registration", {
-						"$email": email,
-						"name": username
-					});
-
-					mixpanel.identify(data.user.email);
-					mixpanel.people.set({
-						"$name": username,
-						"$email": email,
-						"$joined": new Date(),
-						"$last_login": new Date()
-					});
-					dfd.resolve(data);
-				})
-				.error(function (msg) {
-					console.log(msg);
-					dfd.reject(msg);
-				});
-
-			return dfd.promise;
-		},
+		signup: _signup,
 		getUser: function() {
 			var user = {name: 'user not found'};
 			if(!!localStorage.user) {
