@@ -240,32 +240,15 @@ var ostosNero = angular.module('ostosNero', [
 				//loggedIn = checkLogin();
 			$accountsService.session()
 				.then(
-					function (status) {
+					function () {
 
-						/*
-						 Is user logged in?
-						 */
-						console.log(status);
 
-						/**
-						 * Status:
-						 *  - logged_in: boolean | user login status
-						 *  - error: string | string describing error from server
-						 */
-
-						//set rootScope var 'auth' to user login status
-						$rootScope.auth = status.success;
 
 						/**
 						 * if user is logged in, redirect them to their list(s)
 						 */
-						if (!!$rootScope.auth) {
-							console.log('redir to list');
-							$location.path('/list/');
-						} else {
-							console.log('redir to root');
-							$location.path('/');
-						}
+						console.log('redir to list');
+						$location.path('/list/');
 						spinner.stop();
 						$rootScope.loaded = true;
 
@@ -294,6 +277,7 @@ var ostosNero = angular.module('ostosNero', [
 
 
 					}, function (reason) {
+						console.log('redir to root');
 						$location.path('/');
 						$log.warn('ERR:', 'check login failed: ', reason);
 						$rootScope.loaded = true;
