@@ -2,78 +2,27 @@
  * controller for handling the user lists and related processes
  */
 mod.controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, storage, listService, scroller, sync) {
-	//$scope.listParams = $routeParams;
+
 	$scope.location = $location.url();
-	console.log($location.url());
-	//console.log($routeParams);
+	$scope.errors 		= [];
+	$scope.successes 	= [];
+
 	NProgress.start();
-	listService.getNew().then(
-		function (status) {
-			console.log("got list");
-			console.log(status);
-			NProgress.done();
-			$scope.refreshing = false;
-			$scope.list = status;
-		},
-		function(reason) {
-			NProgress.done();
-			console.log("couldnt get list: " + reason);
-		}
-	);
 
-
-	var userLists,
-		getListsTimer;
-
-
-	// define the hasList variable, which controlls the loading animations
-	$scope.hasList = false;
-
-	// wait for the html view to be loaded
-	$scope.$on('$viewContentLoaded', function () {
-		console.log('list page loaded');
-		//NProgress.start();
-	});
-
-
-	var getList = listService.populate();
-
-	/*
-	 * if there is no list in storage or anywhere else.
-	 */
-	if (getList === false) {
-		NProgress.start();
-		console.log("no list in storage");
-		listService.getNew().then(
-			function(data) {
+	listService.getList()
+		.then(
+			function (status) {
 				NProgress.done();
-				console.log("got new list");
-				$scope.list = data;
+				$scope.refreshing = false;
 			},
 			function(reason) {
-				/*
-				 * here should be a reference to a service
-				 * to display errors.
-				 */
-				console.log("getting list didnt work: " + reason);
-			}
-		);
-	} else {
-		console.log("getting list");
-		$scope.list = getList;
-	}
+				NProgress.done();
+				console.log("couldnt get list: " + reason);
+			});
 
 
-	/**
-	 * function to retrieve the user's shopping lists from the server and then
-	 * store them in local storage for future use.
-	 *
-	 * @returns deferred promise: data retrieved from getUserList API call.
-	 */
 	$scope.getLists = function () {
-		console.log('getLists()');
-
-
+		NProgress.start();
 		/*
 		 * once the data has been set, construct the
 		 * list scroller using FT Scroller
@@ -81,24 +30,31 @@ mod.controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, s
 		 * Must be done after the ng-repeat because ng-repeat
 		 * cant add elements to the ft-scroller's generated elements.
 		 */
+
+
+
+		/**
+		 * function to retrieve the user's shopping lists from the server and then
+		 * store them in local storage for future use.
+		 *
+		 * @returns deferred promise: data retrieved from getUserList API call.
+		 */
+
 		/*
 
 		 }*/
 		scroller.construct(document.getElementById('list-container'));
-		NProgress.start();
 		$scope.refreshing = true;
-		listService.getNew().then(
+		listService.getList()
+			.then(
 			function (status) {
-				console.log("got list");
-				console.log(status);
 				NProgress.done();
 				$scope.refreshing = false;
 			},
 			function(reason) {
 				NProgress.done();
 				console.log("couldnt get list: " + reason);
-			}
-		);
+			});
 	};
 
 	$scope.showMenu = function (listElem) {

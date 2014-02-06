@@ -77,10 +77,6 @@ mod.controller('MenuCtrl', function ($scope, $http, $q, $location, $accountsServ
 	})
 	.controller('MenuProfileCtrl', function ($scope, $http, $q, $accountsService)
 	{
-		console.log($accountsService.getUser());
-		$scope.user = $accountsService.getUser();
-
-		console.log($scope.user.email === "update@ostosnero.com");
 
 		if ($scope.user.email === "update@ostosnero.com") {
 			$scope.user.avatar_url = "./images/mikko.jpg";
@@ -88,47 +84,4 @@ mod.controller('MenuCtrl', function ($scope, $http, $q, $location, $accountsServ
 			$scope.user.avatar_url = "./images/avatar-placeholder.png";
 		}
 		if($scope.user.stats.shopping_trips == null) $scope.user.stats.shopping_trips = 0;
-
-		$scope.saved = "...";
-
-		function _getStats()
-		{
-			var dfd = $q.defer();
-
-			$http({
-				url: '../../api/get-stats/',
-				method: 'get',
-				params: {stat: 'savedHistory'}
-			})
-				.success(function (data)
-				{
-					console.log(data);
-					if (!!data.error) {
-						dfd.reject(data.error)
-					}
-					else {
-						dfd.resolve(data);
-					}
-				})
-				.error(function(reason) {
-					dfd.reject(reason);
-				});
-
-
-			return dfd.promise;
-		}
-
-
-
-		_getStats().then(
-			function(data) {
-				$scope.user.saved = $scope.$formatPrice(data.total_saved);
-			},
-			function(reason) {
-				console.error(reason);
-			}
-		);
-
-
-
 	});
