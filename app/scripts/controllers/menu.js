@@ -77,5 +77,4 @@ mod.controller('MenuCtrl', function ($scope, $http, $q, $location, $accountsServ
 		} else {
 			$scope.user.avatar_url = "./images/avatar-placeholder.png";
 		}
-		if($scope.user.stats.shopping_trips == null) $scope.user.stats.shopping_trips = 0;
 	});

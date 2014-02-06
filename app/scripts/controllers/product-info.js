@@ -22,7 +22,7 @@ mod.controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $rout
 		NProgress.start();
 	});
 
-	var lists,
+	var list,
 		listItemID,
 		product,
 		quantity;
@@ -61,18 +61,11 @@ mod.controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $rout
 		$scope.inList = true;
 
 		listItemID = $routeParams.listItemID;
-		lists = listService.data;
-		product = lists.products[listItemID];
+		list = $rootScope.list;
+		product = list.products[listItemID];
 		quantity = parseInt(product.quantity);
 
-
-		console.log(product);
-		console.log(quantity);
-
-		//console.log(productInfo.listItem(listID, listItemID));
-		//$scope.productInfo = productInfo.listItem(listID, listItemID);
-		$scope.productInfo = lists.products[listItemID];
-		console.log($scope.productInfo);
+		$scope.productInfo = product;
 	}
 
 	console.warn(locationService.getCurrentLocation());
