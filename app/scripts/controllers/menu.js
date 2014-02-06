@@ -1,4 +1,4 @@
-mod.controller('MenuCtrl', function ($scope, $http, $q, $location)
+mod.controller('MenuCtrl', function ($scope, $http, $q, $location, $accountsService)
 {
 	var width = window.innerWidth - 46;
 
@@ -57,14 +57,8 @@ mod.controller('MenuCtrl', function ($scope, $http, $q, $location)
 
 	$scope.logout = function ()
 	{
-		var dfd = $q.defer();
-		$http({
-			url: '../../api/logout'
-		})
-			.success(function ()
-			{
-				location.reload();
-			});
+		$accountsService.logout();
+		$location.path('/');
 	};
 
 

@@ -81,10 +81,17 @@ fac.factory('$accountsService', function ($rootScope, $http, $q, $log) {
 		return dfd.promise;
 	}
 
+	function _logout() {
+		$http({
+			url: '../../api/user/logout',
+			method: 'GET'
+		});
+	}
+
 	return {
 		session: _session,
 		login: _login,
-		logout: {},
+		logout: _logout,
 		signup: function (email, username, pass) {
 			var dfd = $q.defer();
 
