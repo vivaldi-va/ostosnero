@@ -1,69 +1,49 @@
 /**
  * Created by vivaldi on 06/12/13.
  */
-fac.factory('$accountsService', function ($rootScope, $http, $q) {
-	var self = this;
-	return {
-		user: {},
-		status: function() {
-			console.log('checkLogin()');
-			var dfd = $q.defer();
-			console.log('checkLogin function');
-			$http({
-				method: 'GET',
-				url: "../../api/checkLogin/"
+fac.factory('$accountsService', function ($rootScope, $http, $q, $log) {
+
+	$rootScope.user = false;
+
+	function _session() {
+		var dfd = $q.defer();
+		$http({
+			url: '../../api/user/session',
+			method: 'GET'
+		})
+			.success(function(data) {
+				if(!data.success) {
+					dfd.reject(data.error);
+				}
+
+				if(!!data.data) {
+					$rootScope.user = data.data;
+					mixpanel.identify(data.data.email);
+					mixpanel.people.set({
+						"$name": data.data.name,
+						"$email": data.data.email,
+						"$joined": null,
+						"$last_login": new Date()
+					});
+
+					mixpanel.track("User reconnected", {
+						"$email": data.data.email
+					});
+				}
+
+
+				dfd.resolve();
 			})
+			.error(function(reason) {
+				$log.warn('ERR:', reason);
+				dfd.reject(reason);
+			});
 
-				.success(function (data) {
-					console.log(data);
+		return dfd.promise;
+	}
 
-					if(!!data.user) {
-						self.user = data.user;
-
-
-
-						mixpanel.identify(data.user.email);
-						mixpanel.people.set({
-							"$name": data.user.name,
-							"$email": data.user.email,
-							"$joined": null,
-							"$last_login": new Date()
-						});
-
-						mixpanel.track("User reconnected", {
-							"$email": data.user.email
-						});
-					}
-
-					/**
-					 * if an attribute that would always appear in the json response
-					 * is not found, assume there is a server error of some kind.
-					 *
-					 * In this case, set the connection error to say as much and
-					 * display an error message to the user.
-					 *
-					 */
-					if (data.logged_in === undefined) {
-						dfd.reject('server errors');
-						$rootScope.connError = "No connection to server could be made";
-					} else {
-						if(!!localStorage.user) {
-							localStorage.user = JSON.stringify(data.user);
-							console.log(self.user);
-						} else {
-							localStorage.setItem('user', JSON.stringify(data.user));
-						}
-						dfd.resolve(data);
-					}
-				})
-				.error(function checkLoginError(e) {
-					console.warn(e);
-					console.warn('login check failed: ' + e);
-					dfd.reject(e);
-				});
-			//console.log(dfd.promise);
-			return dfd.promise;
-		},
+	return {
+		session: _session,
 		login: function (email, pass) {
 			var dfd = $q.defer();
 			$http({

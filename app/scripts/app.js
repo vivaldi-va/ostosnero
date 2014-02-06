@@ -3,20 +3,13 @@
 //new FastClick(document.body);
 
 var ostosNero = angular.module('ostosNero', [
-			'AngularGM',
-			'ngTouch',
-			'ngRoute',
-			'App.Routes',
-			'App.Controllers',
-			'App.Services'
-		])
-
-
-
-
-
-
-
+		'AngularGM',
+		'ngTouch',
+		'ngRoute',
+		'App.Routes',
+		'App.Controllers',
+		'App.Services'
+	])
 
 
 	.factory('$checkout', function ($http, $q, listService) {
@@ -157,7 +150,7 @@ var ostosNero = angular.module('ostosNero', [
 				//var spinnerTarget = document.getElementById(target);
 				spinner = new Spinner(spinnerOpts).spin(parentElement);
 			},
-			stop: function() {
+			stop: function () {
 				spinner.stop();
 			}
 		};
@@ -178,7 +171,7 @@ var ostosNero = angular.module('ostosNero', [
  * Function to run on application start and will show a spinner while the ajax request is
  * waiting for data.
  */
-	.run(function ($rootScope, $location, $q, $http, $accountsService, storage, locationService) {
+	.run(function ($rootScope, $location, $q, $http, $log, $accountsService, storage, locationService) {
 		console.log('run');
 		$rootScope.loaded = false;
 		var spinner,
@@ -211,8 +204,8 @@ var ostosNero = angular.module('ostosNero', [
 
 		// APPCACHE UPDATING =============
 		// Check if a new cache is available on page load.
-		window.addEventListener('load', function(e) {
-			window.applicationCache.addEventListener('updateready', function(e) {
+		window.addEventListener('load', function (e) {
+			window.applicationCache.addEventListener('updateready', function (e) {
 				if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
 					// Browser downloaded a new app cache.
 					if (confirm('A new version of this site is available. Load it?')) {
@@ -224,8 +217,6 @@ var ostosNero = angular.module('ostosNero', [
 			}, false);
 
 		}, false);
-
-
 
 
 		// TODO load existing list data if any exists
@@ -246,72 +237,72 @@ var ostosNero = angular.module('ostosNero', [
 			 * set this status in the root scope.
 			 *
 			 */
-			//loggedIn = checkLogin();
-			$accountsService.status().then(function (status) {
-
-				/*
-				 Is user logged in?
-				 */
-				console.log(status);
-
-				/**
-				 * Status:
-				 *  - logged_in: boolean | user login status
-				 *  - error: string | string describing error from server
-				 */
-
-				console.log(status.logged_in);
-				//set rootScope var 'auth' to user login status
-				$rootScope.auth = status.logged_in;
-				console.log("$rootscope.auth: " + $rootScope.auth);
-
-				/**
-				 * if user is logged in, redirect them to their list(s)
-				 */
-				if (!!$rootScope.auth) {
-					console.log('redir to list');
-					$location.path('/list/');
-				} else {
-					console.log('redir to root');
-					$location.path('/');
-				}
-				spinner.stop();
-				$rootScope.loaded = true;
-
-
-				/*
-				 * once the login sequence has been completed, find the user's location.
-				 */
-
-				var pos = locationService.getCurrentLocation();
-				/*
-				 *  when the current location has been found (asynchronously as it happens)
-				 *  store the recovered latitude and longitude in the localstorage
-				 */
-				pos.then(
+				//loggedIn = checkLogin();
+			$accountsService.session()
+				.then(
 					function (status) {
+
+						/*
+						 Is user logged in?
+						 */
 						console.log(status);
-						storage.add('location.lat', status.coords.latitude);
-						locationService.location.latitude = status.coords.latitude;
-						storage.add('location.long', status.coords.longitude);
-						locationService.location.longitude = status.coords.longitude;
-					},
-					function (reason) {
-						console.log(reason);
-					}
-				);
+
+						/**
+						 * Status:
+						 *  - logged_in: boolean | user login status
+						 *  - error: string | string describing error from server
+						 */
+
+						//set rootScope var 'auth' to user login status
+						$rootScope.auth = status.success;
+
+						/**
+						 * if user is logged in, redirect them to their list(s)
+						 */
+						if (!!$rootScope.auth) {
+							console.log('redir to list');
+							$location.path('/list/');
+						} else {
+							console.log('redir to root');
+							$location.path('/');
+						}
+						spinner.stop();
+						$rootScope.loaded = true;
 
 
-			}, function (reason) {
-				$location.path('/');
-				console.log('check login failed: ' + reason);
-				$rootScope.loaded = true;
-				spinner.stop();
-			});
+						/*
+						 * once the login sequence has been completed, find the user's location.
+						 */
+
+						var pos = locationService.getCurrentLocation();
+						/*
+						 *  when the current location has been found (asynchronously as it happens)
+						 *  store the recovered latitude and longitude in the localstorage
+						 */
+						pos.then(
+							function (status) {
+								console.log(status);
+								storage.add('location.lat', status.coords.latitude);
+								locationService.location.latitude = status.coords.latitude;
+								storage.add('location.long', status.coords.longitude);
+								locationService.location.longitude = status.coords.longitude;
+							},
+							function (reason) {
+								console.log(reason);
+							}
+						);
+
+
+					}, function (reason) {
+						$location.path('/');
+						$log.warn('ERR:', 'check login failed: ', reason);
+						$rootScope.loaded = true;
+						spinner.stop();
+					});
 		}
 	})
 	.run(function ($rootScope) {
-		$rootScope.$on('$routeChangeStart', function(next, current) {
+		$rootScope.$on('$routeChangeStart', function (next, current) {
 			NProgress.remove();
 		})
 	});
