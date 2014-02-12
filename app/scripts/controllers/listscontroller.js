@@ -122,15 +122,12 @@ angular.module('App.Controllers').controller('ListCtrl', function ($q, $http, $r
 	 * @param element: the reference to the element from ng-repeat.
 	 */
 	$scope.removeFromList = function (listItemId, element) {
-		var list = listService.data;
+		delete $rootScope.list.products[listItemId];
 
-		// remove the list item from the associative array
-		delete list.products[listItemId];
-		console.log(list);
-		storage.set('userLists', list);
-
-		listService.remove(listItemId);
-
+		listService.removeFromList(listItemId)
+			.then(function() {
+				$scope.getLists();
+			});
 	};
 
 	$scope.sort = function () {

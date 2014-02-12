@@ -58,6 +58,24 @@ angular.module('App.Services').factory('listService', function ($rootScope, $htt
 
 		return dfd.promise;
 	}
+
+	function _removeFromList(listItemId) {
+		var dfd = $q.defer();
+
+		$http({
+			url: '../../api/list/remove/' + listItemId,
+			method: 'get'
+		})
+			.success(function(data) {
+				if(!data.success) dfd.reject(data.error);
+				dfd.resolve();
+			})
+			.error(function(reason) {
+				dfd.reject(reason);
+			});
+
+		return dfd.promise;
+	}
 /*
 	function _addProduct(productId) {
 		var dfd = $q.defer();
@@ -67,18 +85,6 @@ angular.module('App.Services').factory('listService', function ($rootScope, $htt
 	return {
 		getList: _getList,
 		addToList: _addToList,
-		remove: function (listItemId) {
-			$http({
-				url: '../../api/lists/remove-from-list/',
-				params: {listid: listItemId},
-				method: 'get'
-			})
-				.success(function (data) {
-					console.log(data);
-				})
-				.error(function (msg) {
-					console.log(msg);
-				});
-		}
+		removeFromList: _removeFromList
 	};
 });
