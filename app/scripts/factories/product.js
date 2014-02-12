@@ -41,22 +41,20 @@ fac.factory('productInfo', function ($http, $q) {
 				return dfd.promise;
 			},
 			getLocalPrices: function(id, location) {
-				console.log(id);
 				var dfd = $q.defer();
 				if(!!location.lat && !!location.long) {
 					//console.o
 					$http({
-						url: '../../api/getProductPrices/',
-						method: 'GET',
-						params: {lat: location.lat, long: location.long, productID: id}
+						url: '../../api/product/prices/' + id + '/' + location.lat + '/' + location.long,
+						method: 'GET'
 					})
 						.success(function(data) {
 							console.log(data);
-							if(data.success === 0) {
+							if(!data.success) {
 								dfd.reject(data.error);
 							}
 
-							dfd.resolve(data);
+							dfd.resolve(data.data);
 						})
 						.error(function(reason) {
 							dfd.reject(reason);

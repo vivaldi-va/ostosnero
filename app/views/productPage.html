@@ -41,11 +41,13 @@
 				<h3 class="list-label">Lähikauppojen hinnat</h3>
 
 				<div class="list">
-					<div ng-repeat="price in prices" class="list-item">
+					<div ng-repeat="price in prices" class="list-item" ng-class="{'user-location': price.user}">
 
 						<div class="list-item-text">
-							<span class="list-item-label"><strong>{{ price.chainName
-								}}</strong> {{ price.shopName }}</span>
+							<span class="list-item-label">
+								<strong>{{ price.shop_chain }}</strong>
+								{{ price.shop_location }}
+							</span>
 						</div>
 
 						<div class="interaction-wrapper">
