@@ -72,27 +72,7 @@ var ostosNero = angular.module('ostosNero', [
 
 	.factory('searchService', function ($q, $http, storage) {
 		return {
-			getResults: function (term) {
-				var dfd = $q.defer();
-				$http({
-					url: '../../api/getSearchResults',
-					method: 'get',
-					params: {term: term}
-				})
-					.success(function (data) {
-						console.log(data);
-						dfd.resolve(data);
-						mixpanel.track("User searched for products", {
-							"term": term
-						});
-					})
-					.error(function (reason) {
-						console.log(reason);
-						dfd.reject(reason);
-					});
 
-				return dfd.promise;
-			}
 		}
 	})
 	.factory('scroller', function () {

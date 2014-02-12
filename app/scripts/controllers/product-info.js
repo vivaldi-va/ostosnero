@@ -1,4 +1,4 @@
-mod.controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $routeParams, $log, productInfo, storage, sync, spinner, listService, locationService, scroller) {
+mod.controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $routeParams, $log, ProductService, storage, sync, spinner, listService, locationService, scroller) {
 	/**
 	 * Url structure: /#/product/:productID/
 	 *
@@ -41,8 +41,8 @@ mod.controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $rout
 	if (!!$routeParams.productID) {
 
 		$scope.inList = false;
-		//var productData = getProductInfo();
-		var productData = productInfo.product($routeParams.productID);
+		//var productData = getProductService();
+		var productData = ProductService.product($routeParams.productID);
 
 		productData.then(function (data) {
 				NProgress.inc();
@@ -85,7 +85,7 @@ mod.controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $rout
 			//spinner.init(document.getElementById('local-prices'), true);
 
 
-			productInfo.getLocalPrices(productID, {lat: latitude, long: longitude})
+			ProductService.getLocalPrices(productID, {lat: latitude, long: longitude})
 				.then(function (prices) {
 					//spinner.stop();
 					NProgress.done();
@@ -179,7 +179,7 @@ mod.controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $rout
 
 	$scope.updatePrice = function (price) {
 		price.waiting = true;
-		productInfo.updatePrice(price.price, price.shopID, price.productId).then(
+		ProductService.updatePrice(price.price, price.shopID, price.productId).then(
 			function (status) {
 				price.updated = true;
 				price.waiting = false;

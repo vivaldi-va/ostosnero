@@ -1,4 +1,4 @@
-mod.controller('SearchCtrl', function ($rootScope, $scope, $route, searchService, scroller, listService, storage) {
+mod.controller('SearchCtrl', function ($rootScope, $scope, $route, ProductService, scroller, listService, storage) {
 
 
     $scope.page = {
@@ -8,7 +8,7 @@ mod.controller('SearchCtrl', function ($rootScope, $scope, $route, searchService
 
 
 	$scope.$on('$routeChangeSuccess', function(e, curr, prev) {
-		if (prev.controller === 'ProductPageCtrl') {
+		if (!!prev && prev.controller === 'ProductPageCtrl') {
 			repopulateSearchResults();
 		}
 	});
@@ -34,17 +34,14 @@ mod.controller('SearchCtrl', function ($rootScope, $scope, $route, searchService
     $scope.addToList = function (productId, resultElement) {
 		resultElement.busy = true;
 
-        listService.add($rootScope.listId, productId)
+        listService.addToList(productId)
             .then(
                 function (status) {
 					resultElement.busy = false;
-                    if (status.success === 1) {
-                        $scope.success = resultElement;
-                    }
+					$scope.success = resultElement;
                 },
                 function (reason) {
 					resultElement.busy = false;
-                    console.log(reason);
                 }
             );
     };
@@ -53,12 +50,8 @@ mod.controller('SearchCtrl', function ($rootScope, $scope, $route, searchService
     function fetchResults() {
 		NProgress.start();
         if ($scope.searchTerm.length >= 3) {
-
-
-            console.log("valid search term, we'll send your shit now");
-            var results = searchService.getResults($scope.searchTerm);
-
-            results.then(function (results) {
+			ProductService.getSearchResults($scope.searchTerm)
+				.then(function (results) {
 					NProgress.done();
                     $scope.status = 'found';
                     storage.add('searchResults', results);

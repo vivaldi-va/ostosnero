@@ -35,6 +35,29 @@ fac.factory('listService', function ($rootScope, $http, $q, $log, storage) {
 			});
 		return dfd.promise;
 	}
+
+	function _addToList(productId) {
+		var dfd = $q.defer();
+
+		$http({
+			url: '../../api/list/add/' + productId,
+			method: 'GET'
+		})
+			.success(function (data) {
+				if(!data.success) dfd.reject(data.error);
+				mixpanel.track("User added a product to their list", {
+					"product_id": productId
+				});
+				dfd.resolve();
+
+			})
+			.error(function (msg) {
+				$log.warn('ERR:', 'adding to list failed', msg);
+				dfd.reject(msg);
+			});
+
+		return dfd.promise;
+	}
 /*
 	function _addProduct(productId) {
 		var dfd = $q.defer();
@@ -43,45 +66,7 @@ fac.factory('listService', function ($rootScope, $http, $q, $log, storage) {
 
 	return {
 		getList: _getList,
-		add: function (listID, productID) {
-
-			var dfd = $q.defer(),
-				self = this,
-				list = self.data;
-
-			console.log("add product method in listService");
-			console.log(listID);
-			console.log(productID);
-			$http({
-				method: 'GET',
-				url: '../../api/lists/addToUserList',
-				params: {listID: list.attributes.id, productID: productID}
-			})
-				.success(function (data) {
-					console.log(data);
-					if (data.success === 1) {
-						localStorage.removeItem('userLists');
-						console.log(data);
-
-						var listItemID = data.data.listItemID;
-
-						mixpanel.track("User added a product to their list", {
-							"product_id": productID,
-							"list_id": listID
-						});
-						list.products[listItemID] = data.data;
-						dfd.resolve(data);
-					} else {
-						dfd.reject(data);
-					}
-				})
-				.error(function (msg) {
-					console.warn('adding to list failed: \r\n' + msg);
-					dfd.reject(msg);
-				});
-
-			return dfd.promise;
-		},
+		addToList: _addToList,
 		remove: function (listItemId) {
 			$http({
 				url: '../../api/lists/remove-from-list/',

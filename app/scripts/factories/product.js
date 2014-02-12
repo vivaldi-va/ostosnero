@@ -3,9 +3,39 @@
  */
 // Teach the injector how to build a 'greeter'
 	// Notice that greeter itself is dependent on '$window'
-fac.factory('productInfo', function ($http, $q) {
+fac.factory('ProductService', function ($http, $q, $log) {
 		// This is a factory function, and is responsible for
 		// creating the 'greet' service.
+
+
+
+
+		function _getSearchResults(term) {
+				var dfd = $q.defer();
+				$http({
+					url: '../../api/search/' + term,
+					method: 'get'
+				})
+					.success(function (data) {
+						console.log(data);
+
+						if(!data.success) dfd.reject(data.error);
+
+						dfd.resolve(data.data);
+						mixpanel.track("User searched for products", {
+							"term": term
+						});
+					})
+					.error(function (reason) {
+						$log.warn('ERR:', "Product search failed", reason);
+						dfd.reject(reason);
+					});
+
+				return dfd.promise;
+
+		}
+
+
 		return {
 			listItem: function (listID, listItemID) {
 				if (window.localStorage && window.localStorage.userLists) {
@@ -23,16 +53,17 @@ fac.factory('productInfo', function ($http, $q) {
 				}
 
 			},
-			product: function (productID) {
+			product: function (productId) {
 				var dfd = $q.defer();
 
 				$http({
 					method: 'GET',
-					url: '../../api/getProductInfo/',
-					params: {productID: productID}
+					url: '../../api/product/' + productId
 				})
 					.success(function (data) {
-						dfd.resolve(data);
+
+						if(!data.success) dfd.reject(data.error);
+						dfd.resolve(data.data);
 					})
 					.error(function (reason) {
 						dfd.reject(reason);
@@ -40,6 +71,7 @@ fac.factory('productInfo', function ($http, $q) {
 
 				return dfd.promise;
 			},
+			getSearchResults: _getSearchResults,
 			getLocalPrices: function(id, location) {
 				var dfd = $q.defer();
 				if(!!location.lat && !!location.long) {
