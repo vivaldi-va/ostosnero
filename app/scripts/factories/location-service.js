@@ -2,7 +2,7 @@
  * Created by vivaldi on 5.12.2013.
  */
 
-fac
+angular.module('App.Services')
 	.factory('locationService', function ($q, $http, $rootScope)
 	{
 		return {
