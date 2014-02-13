@@ -1,4 +1,4 @@
-mod.controller('LocationCtrl', function($scope, $q, $http, $location, $log, storage, locationService) {
+angular.module('App.Controllers').controller('LocationCtrl', function($scope, $q, $http, $location, $log, storage, locationService) {
 
     $scope.page = {
         title: "Location"

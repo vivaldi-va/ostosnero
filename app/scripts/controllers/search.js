@@ -1,4 +1,4 @@
-mod.controller('SearchCtrl', function ($rootScope, $scope, $route, ProductService, scroller, listService, storage) {
+angular.module('App.Controllers').controller('SearchCtrl', function ($rootScope, $scope, $route, ProductService, scroller, listService, storage) {
 
 
     $scope.page = {

@@ -1,4 +1,4 @@
-mod.controller('SortCtrl', function ($scope, sortService, listService, scroller, storage) {
+angular.module('App.Controllers').controller('SortCtrl', function ($scope, sortService, listService, scroller, storage) {
 	console.log('sort controller');
 	$scope.sortedProducts = "optimizing your list&hellip;";
 	$scope.loading = true;

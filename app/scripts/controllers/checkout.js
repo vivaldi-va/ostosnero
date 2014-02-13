@@ -1,4 +1,4 @@
-mod.controller('CheckoutCtrl', function($scope, sortService) {
+angular.module('App.Controllers').controller('CheckoutCtrl', function($scope, sortService) {
 
 
 	$scope.checked = sortService.checked;

@@ -1,4 +1,4 @@
-mod.controller('RegisterCtrl', function ($scope, $http, $q, $accountsService) {
+angular.module('App.Controllers').controller('RegisterCtrl', function ($scope, $http, $q, $accountsService) {
 
 
 

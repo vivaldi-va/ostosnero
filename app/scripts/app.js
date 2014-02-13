@@ -2,7 +2,11 @@
 
 //new FastClick(document.body);
 
-var ostosNero = angular.module('ostosNero', [
+angular.module('App.Routes', []);
+angular.module('App.Controllers', []);
+angular.module('App.Services', []);
+
+angular.module('ostosNero', [
 		'AngularGM',
 		'ngTouch',
 		'ngRoute',
@@ -264,10 +268,5 @@ var ostosNero = angular.module('ostosNero', [
 						spinner.stop();
 					});
 		}
-	})
-	.run(function ($rootScope) {
-		$rootScope.$on('$routeChangeStart', function (next, current) {
-			NProgress.remove();
-		})
 	});
 

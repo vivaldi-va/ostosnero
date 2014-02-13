@@ -12,7 +12,7 @@
      *
      * -
      */
-    mod.controller('MainCtrl', function ($q, $http, $scope, $rootScope, $location) {
+    angular.module('App.Controllers').controller('MainCtrl', function ($q, $http, $scope, $rootScope, $location) {
          console.log('loaded: ' + $rootScope.loaded);
         /**
          * Function to check for network connection.

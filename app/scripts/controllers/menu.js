@@ -1,4 +1,4 @@
-mod.controller('MenuCtrl', function ($scope, $http, $q, $location, $accountsService)
+angular.module('App.Controllers').controller('MenuCtrl', function ($scope, $http, $q, $location, $accountsService)
 {
 	var width = window.innerWidth - 46;
 

@@ -1,4 +1,5 @@
-ostosNero.controller('MapCtrl', function ($scope, $routeParams, $http, $q, angulargmContainer)
+angular.module('App.Controllers')
+	.controller('MapCtrl', function ($scope, $routeParams, $http, $q, angulargmContainer)
 {
 
 	var lat = $routeParams.lat,

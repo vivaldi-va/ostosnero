@@ -1,4 +1,4 @@
-mod.controller('LoginCtrl', function($q, $http, $scope, $rootScope, $location, $accountsService) {
+angular.module('App.Controllers').controller('LoginCtrl', function($q, $http, $scope, $rootScope, $location, $accountsService) {
     console.log('login controller');
 
     $scope.error = false;

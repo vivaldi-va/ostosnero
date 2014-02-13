@@ -1,4 +1,4 @@
-mod.controller('GlobalCtrl', ['$scope', '$location', function ($scope, $location)
+angular.module('App.Controllers').controller('GlobalCtrl', ['$scope', '$location', function ($scope, $location)
 {
 	console.log('global ctrl');
 

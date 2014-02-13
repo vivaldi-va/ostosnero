@@ -1,7 +1,7 @@
 /**
  * controller for handling the user lists and related processes
  */
-mod.controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, storage, listService, scroller, sync) {
+angular.module('App.Controllers').controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, storage, listService, scroller, sync) {
 
 	$scope.location = $location.url();
 	$scope.errors 		= [];
