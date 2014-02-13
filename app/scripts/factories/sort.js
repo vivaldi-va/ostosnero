@@ -1,7 +1,7 @@
 /**
  * Created by vivaldi on 06/12/13.
  */
-fac.factory('sortService', function ($http, $q, storage, listService) {
+angular.module('App.Services').factory('sortService', function ($http, $q, storage, listService) {
 	return {
 		data: {},
 		checked: {},
@@ -19,8 +19,6 @@ fac.factory('sortService', function ($http, $q, storage, listService) {
 			long = storage.retrieve('location.long');
 
 			dfd = $q.defer();
-			console.log("data from list service:\n");
-			console.log(list);
 
 			if (list.attributes.id === null) {
 				dfd.reject("there is no list data in teh list service variable");

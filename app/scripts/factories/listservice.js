@@ -9,7 +9,7 @@
  * @method: add: add a product to the user list
  * @method: remove: remove a product from the user list
  */
-fac.factory('listService', function ($rootScope, $http, $q, $log, storage) {
+angular.module('App.Services').factory('listService', function ($rootScope, $http, $q, $log, storage) {
 	console.log('list service');
 
 	$rootScope.list = false;

@@ -1,7 +1,7 @@
 /**
  * Created by vivaldi on 06/12/13.
  */
-fac.factory('$accountsService', function ($rootScope, $http, $q, $log) {
+angular.module('App.Services').factory('$accountsService', function ($rootScope, $http, $q, $log) {
 
 	$rootScope.user = false;
 

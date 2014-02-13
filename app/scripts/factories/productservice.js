@@ -3,7 +3,7 @@
  */
 // Teach the injector how to build a 'greeter'
 	// Notice that greeter itself is dependent on '$window'
-fac.factory('ProductService', function ($http, $q, $log) {
+angular.module('App.Services').factory('ProductService', function ($http, $q, $log) {
 	// This is a factory function, and is responsible for
 	// creating the 'greet' service.
 
