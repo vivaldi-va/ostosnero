@@ -1,9 +1,8 @@
 /**
  * Created by vivaldi on 06/12/13.
  */
-angular.module('App.Routes', [])
+angular.module('App.Routes')
 	.config(function ($routeProvider) {
-		console.log('App.Routes');
 		$routeProvider
 			.when('/', {
 				templateUrl: 'views/start-screen.html',
