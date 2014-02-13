@@ -54,7 +54,7 @@ mod.controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $rout
 			});
 
 	}
-	else if (!!$routeParams.listItemID) {
+	else if (!!$routeParams && !!$routeParams.listItemID) {
 		$scope.inList 		= true;
 
 		listItemID 			= $routeParams.listItemID;
@@ -179,19 +179,20 @@ mod.controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $rout
 
 	$scope.updatePrice = function (price) {
 		price.waiting = true;
-		ProductService.updatePrice(price.price, price.shopID, price.productId).then(
-			function (status) {
+		ProductService.updatePrice(product.product_id, price.shop_id, price.price)
+			.then(function (status) {
 				price.updated = true;
 				price.waiting = false;
 			},
 			function (reason) {
-				console.warn(reason);
+				$log.warn('ERR:', "Updating product price failed", reason);
 			}
 		);
 	};
 	var syncTimer,
 		syncTimeout = 2000;
 
+	// TODO: remove the jquery
 	$('.change-quant').bind('touchend mouseup', function (e) {
 		console.log('end');
 		syncTimer = setTimeout(syncData, 2000);

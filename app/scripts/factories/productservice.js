@@ -4,36 +4,53 @@
 // Teach the injector how to build a 'greeter'
 	// Notice that greeter itself is dependent on '$window'
 fac.factory('ProductService', function ($http, $q, $log) {
-		// This is a factory function, and is responsible for
-		// creating the 'greet' service.
+	// This is a factory function, and is responsible for
+	// creating the 'greet' service.
 
 
 
 
-		function _getSearchResults(term) {
-				var dfd = $q.defer();
-				$http({
-					url: '../../api/search/' + term,
-					method: 'get'
-				})
-					.success(function (data) {
-						console.log(data);
+	function _getSearchResults(term) {
+			var dfd = $q.defer();
+			$http({
+				url: '../../api/search/' + term,
+				method: 'get'
+			})
+				.success(function (data) {
+					console.log(data);
 
-						if(!data.success) dfd.reject(data.error);
+					if(!data.success) dfd.reject(data.error);
 
-						dfd.resolve(data.data);
-						mixpanel.track("User searched for products", {
-							"term": term
-						});
-					})
-					.error(function (reason) {
-						$log.warn('ERR:', "Product search failed", reason);
-						dfd.reject(reason);
+					dfd.resolve(data.data);
+					mixpanel.track("User searched for products", {
+						"term": term
 					});
+				})
+				.error(function (reason) {
+					$log.warn('ERR:', "Product search failed", reason);
+					dfd.reject(reason);
+				});
 
-				return dfd.promise;
+			return dfd.promise;
 
-		}
+	}
+
+	function _updatePrice(productId, shopId, price) {
+		var dfd = $q.defer();
+		$http({
+			url: '../../api/product/prices/update/' + productId + '/' + shopId + '/' + price,
+			method: 'GET'
+		})
+			.success(function(success){
+				if(!success.success) dfd.reject(success.error);
+				dfd.resolve();
+			})
+			.error(function(reason) {
+				dfd.reject(reason);
+			});
+
+		return dfd.promise;
+	}
 
 
 		return {
@@ -95,36 +112,6 @@ fac.factory('ProductService', function ($http, $q, $log) {
 				}
 				return dfd.promise;
 			},
-			updatePrice: function(newPrice, shop, product) {
-				var dfd = $q.defer(),
-					data = {
-						productid: product,
-						shopid: shop,
-						price: newPrice
-					};
-				$http({
-					url: '../../api/prices/set-product-price/',
-					method: 'POST',
-					data: data
-				})
-					.success(function(status) {
-						console.log(status);
-						if(!!status.success) {
-							mixpanel.track("User updated a price", {
-								"product_id": product,
-								"shop_id": shop,
-								"new_price": newPrice
-							});
-							dfd.resolve(status);
-						} else {
-							dfd.reject(status.error);
-						}
-					})
-					.error(function(reason) {
-						dfd.reject(reason);
-					});
-
-				return dfd.promise;
-			}
+			updatePrice: _updatePrice
 		};
 	});
