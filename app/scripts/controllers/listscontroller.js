@@ -1,7 +1,7 @@
 /**
  * controller for handling the user lists and related processes
  */
-angular.module('App.Controllers').controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, storage, listService, scroller, sync) {
+mod.controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, $log, storage, listService, scroller, sync) {
 
 	$scope.location = $location.url();
 	$scope.errors 		= [];
@@ -69,16 +69,28 @@ angular.module('App.Controllers').controller('ListCtrl', function ($q, $http, $r
 
 
 	function addQuant(listItemId, quantDefer) {
-		console.log('add quant');
-		var dfd = $q.defer(),
-			quantity = parseInt(listService.data.products[listItemId].quantity);
-
+		var quantity = $rootScope.list.products[listItemId].quantity;
 		quantity += quantDefer;
-		console.log(quantity);
-		listService.data.products[listItemId].quantity = quantity;
-		storage.set('userLists', listService.data);
+		//listService.data.products[listItemId].quantity = quantity;
 		sync.quantity(listItemId, quantity);
 	}
+
+	$scope.changeQuantity = function(listItemId, quantDiff) {
+		var quantity;
+		$rootScope.list.products[listItemId].quantity += quantDiff;
+		quantity = $rootScope.list.products[listItemId].quantity;
+		listService.changeQuantity(listItemId, quantity)
+			.then(
+				function(success) {
+					$scope.successes.push("Quantity changed");
+				},
+				function(reason) {
+					// TODO: make errors relate to reason's error message
+					$log.warn('ERR: "Quantity change failed', reason);
+					$scope.errors.push("Could not change quantity");
+				}
+			);
+	};
 
 	$('#list-container').on('click', '.list-item-menu .add, .list-item-menu .remove', function (e) {
 		e.preventDefault();

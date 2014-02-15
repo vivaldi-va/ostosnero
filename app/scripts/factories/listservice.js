@@ -76,6 +76,22 @@ angular.module('App.Services').factory('listService', function ($rootScope, $htt
 
 		return dfd.promise;
 	}
+
+	function _changeQuantity(listItemId, quantity) {
+		var dfd = $q.defer();
+		$http({
+			url: '../../api/list/quantity/' + listItemId + '/' + quantity,
+			method: 'get'
+		})
+			.success(function(status) {
+				if(!status.success) dfd.reject(status.error);
+				dfd.resolve();
+			})
+			.error(function(reason) {
+				dfd.reject(reason);
+			});
+		return dfd.promise;
+	}
 /*
 	function _addProduct(productId) {
 		var dfd = $q.defer();
@@ -85,6 +101,7 @@ angular.module('App.Services').factory('listService', function ($rootScope, $htt
 	return {
 		getList: _getList,
 		addToList: _addToList,
-		removeFromList: _removeFromList
+		removeFromList: _removeFromList,
+		changeQuantity: _changeQuantity
 	};
 });
