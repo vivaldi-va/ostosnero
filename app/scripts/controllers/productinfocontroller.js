@@ -1,4 +1,5 @@
-angular.module('App.Controllers').controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $routeParams, $log, ProductService, storage, sync, spinner, listService, locationService, scroller) {
+angular.module('App.Controllers')
+	.controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $routeParams, $log, ProductService, storage, sync, spinner, listService, locationService, scroller) {
 	/**
 	 * Url structure: /#/product/:productID/
 	 *
@@ -15,7 +16,8 @@ angular.module('App.Controllers').controller('ProductPageCtrl', function ($scope
 	 * maybe.
 	 */
 
-	$scope.errors = [];
+	$scope.errors 		= [];
+	$scope.successes 	= [];
 
 	$scope.$on('$viewContentLoaded', function () {
 		NProgress.start();
@@ -24,7 +26,13 @@ angular.module('App.Controllers').controller('ProductPageCtrl', function ($scope
 	var list,
 		listItemID,
 		product,
-		quantity;
+		quantity,
+		latitude,
+		longitude,
+		productID;
+
+	latitude 	= $rootScope.location.latitude;
+	longitude 	= $rootScope.location.longitude;
 
 	$scope.prices = false;
 	$scope.isAddingProduct = false;
@@ -56,7 +64,6 @@ angular.module('App.Controllers').controller('ProductPageCtrl', function ($scope
 	}
 	else if (!!$routeParams && !!$routeParams.listItemID) {
 		$scope.inList 		= true;
-
 		listItemID 			= $routeParams.listItemID;
 		list 				= $rootScope.list;
 		product 			= list.products[listItemID];
@@ -65,121 +72,53 @@ angular.module('App.Controllers').controller('ProductPageCtrl', function ($scope
 		$log.info('DEBUG:', "product info", product);
 	}
 
-	var latitude,
-		longitude,
-		productID;
-
-
-	locationService.getCurrentLocation()
-		.then(function (coords) {
-			console.log($routeParams);
-			NProgress.inc();
-			latitude = coords.coords.latitude;
-			longitude = coords.coords.longitude;
-			if (!!product && !!product.product_id) {
-				productID = product.product_id;
-			} else {
-				productID = $routeParams.productID
-			}
-
-			//spinner.init(document.getElementById('local-prices'), true);
-
-
-			ProductService.getLocalPrices(productID, {lat: latitude, long: longitude})
-				.then(function (prices) {
-					//spinner.stop();
-					NProgress.done();
-					$scope.prices = [];
-					console.log(prices);
-					$scope.prices = prices;
-					for (var p in prices) {
-						$scope.placeholder = "";
-
-
-						if (!prices[p].price) {
-							$scope.placeholder = "no price here yet";
-						}
-					}
-					//$scope.prices = prices;
-					scroller.construct(document.getElementById('productPage'));
-				},
-				function (reason) {
-				}
-			);
-
-		},
-		function (reason) {
-			NProgress.done();
-			if (!!reason.code) {
-				switch (reason.code) {
-					case 1:
-						$scope.errors.push("Could not get location. \nOstosnero doesn't have permission to get location");
-						break;
-					case 2:
-						$scope.errors.push("Could not find location");
-						break;
-					case 3:
-						$scope.errors.push("Took too long finding your location");
-						break;
-				}
-
-			}
-
-			//$rootScope.appError = "Can not get location: " +  reason.message;
-			console.warn(reason);
-		});
-
-
-	/*$scope.back = function ()
-	 {
-	 console.log('back');
-	 history.back();
-
-	 };*/
-
-	function setQuantityStuff() {
-		//lists.lists[listID].products[listItemID].quantity = quantity;
-		lists.products[listItemID].quantity = quantity;
-		console.log(lists.products[listItemID].quantity);
-		$scope.productInfo = lists.products[listItemID];
-		storage.set('userLists', lists);
-		console.log($scope.productInfo.quantity);
+	if (!!product && !!product.product_id) {
+		productID = product.product_id;
+	} else {
+		productID = $routeParams.productID
 	}
 
 
-	$scope.increase = function () {
-		quantity += 1;
-		console.log(quantity);
-		setQuantityStuff();
-	};
-	$scope.decrease = function () {
-		quantity -= 1;
-		console.log(quantity);
-		setQuantityStuff();
-	};
+
+	ProductService.getLocalPrices(productID, {lat: latitude, long: longitude})
+		.then(function (prices) {
+			//spinner.stop();
+			NProgress.done();
+			$scope.prices = [];
+			console.log(prices);
+			$scope.prices = prices;
+			for (var p in prices) {
+				$scope.placeholder = "";
+
+
+				if (!prices[p].price) {
+					$scope.placeholder = "no price here yet";
+				}
+			}
+			//$scope.prices = prices;
+			scroller.construct(document.getElementById('productPage'));
+		},
+		function (reason) {
+		}
+	);
 
 	$scope.addProduct = function () {
-		var button = $('#prodInfoAddBtn'),
-			list = listService.data,
-			productID = $routeParams.productID;
+		var productID = $routeParams.productID;
 		$scope.isAddingProduct = true;
-		listService.add(list.attributes.id, productID).then(
-			function (status) {
+		listService.addToList(productID)
+			.then(function (status) {
 				$scope.isAddingProduct = false;
-				console.log(status);
 			},
 			function (reason) {
 				$scope.isAddingProduct = false;
-
-				console.warn(reason);
-			}
-		);
+				$log.warn("ERR:", "Adding product failed", reason);
+			});
 	};
 
 
 	$scope.updatePrice = function (price) {
 		price.waiting = true;
-		ProductService.updatePrice(product.product_id, price.shop_id, price.price)
+		ProductService.updatePrice(productID, price.shop_id, price.price)
 			.then(function (status) {
 				price.updated = true;
 				price.waiting = false;
@@ -189,28 +128,24 @@ angular.module('App.Controllers').controller('ProductPageCtrl', function ($scope
 			}
 		);
 	};
-	var syncTimer,
-		syncTimeout = 2000;
 
-	// TODO: remove the jquery
-	$('.change-quant').bind('touchend mouseup', function (e) {
-		console.log('end');
-		syncTimer = setTimeout(syncData, 2000);
-		console.log(syncTimer);
-	});
-
-	$('.change-quant').bind('touchstart mousedown', function (e) {
-		console.log('start');
-		clearTimeout(syncTimer);
-	});
-
-	function syncData() {
-		quantity = lists.products[listItemID].quantity;
-		console.log(quantity);
-		console.log(listItemID);
-
-		sync.quantity(listItemID, quantity);
-	}
+	$scope.changeQuantity = function(listItemId, quantDiff) {
+		$log.info('DEBUG:', "Change list item quantity", [listItemId, quantDiff]);
+		var quantity;
+		$rootScope.list.products[listItemId].quantity = parseInt($rootScope.list.products[listItemId].quantity) + quantDiff;
+		quantity = $rootScope.list.products[listItemId].quantity;
+		listService.changeQuantity(listItemId, quantity)
+			.then(
+			function(success) {
+				$scope.successes.push("Quantity changed");
+			},
+			function(reason) {
+				// TODO: make errors relate to reason's error message
+				$log.warn('ERR: "Quantity change failed', reason);
+				$scope.errors.push("Could not change quantity");
+			}
+		);
+	};
 
 
 });

@@ -34,8 +34,8 @@
 					<a class="btn flat del" ng-click="removeFromList(product.list_item_id, product)">
 						<i class="icon-trash"></i>
 					</a>
-					<a class="btn flat remove" ng-click="changeQuant(product.list_item_id, -1); $event.stopPropagation()"><i class="icon-minus"></i></a>
-					<a class="btn flat add" ng-click="changeQuant(product.list_item_id, 1); $event.stopPropagation()"><i class="icon-plus"></i></a>
+					<a class="btn flat remove" ng-click="changeQuantity(product.list_item_id, -1); $event.stopPropagation()"><i class="icon-minus"></i></a>
+					<a class="btn flat add" ng-click="changeQuantity(product.list_item_id, 1); $event.stopPropagation()"><i class="icon-plus"></i></a>
 					<a class="btn flat info" href="#/list/{{ product.list_item_id }}"><i class="icon-info-sign"></i></a>
 				</div>
 			</div>

@@ -32,14 +32,15 @@ angular.module('App.Services')
 				 */
 				if (navigator.geolocation) {
 					var dfd = $q.defer();
-
-					console.log('location works');
-
 					navigator.geolocation.getCurrentPosition(
 						function (position)
 						{
 							$rootScope.$apply(function ()
 							{
+								$rootScope.location = {
+									"latitude": position.coords.latitude,
+									"longitude": position.coords.longitude
+								};
 								dfd.resolve(position);
 							});
 						},

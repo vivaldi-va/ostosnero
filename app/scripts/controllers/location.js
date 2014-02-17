@@ -5,15 +5,12 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $q
     };
 
 	$scope.errors = [];
-    console.log('location controller');
+    $log.info('ROUTE:', "Location controller");
     $scope.currentLocation = "Fetching location...";
 	$scope.currentLocationEnabled = true;
 	$scope.locations = [];
 	$scope.gettingLocations = false;
 
-
-
-	var position;
 	locationService.getCurrentLocation().then(
 		function(position) {
 			$scope.currentCoords = {lat:position.coords.latitude, long:position.coords.longitude};
@@ -40,7 +37,6 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $q
 			$log.warn("missing location term");
 			$scope.errors.push("Nothing to search for");
 		}
-		console.log(term);
 
 		$location.path('/location/search/' + term);
 	};

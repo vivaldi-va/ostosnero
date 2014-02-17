@@ -1,7 +1,7 @@
 /**
  * Created by vivaldi on 06/12/13.
  */
-angular.module('App.Services').factory('sortService', function ($http, $q, storage, listService) {
+angular.module('App.Services').factory('sortService', function ($http, $q, $rootScope, storage, listService) {
 	return {
 		data: {},
 		checked: {},
@@ -9,14 +9,13 @@ angular.module('App.Services').factory('sortService', function ($http, $q, stora
 
 			var lat,
 				long,
-				listId,
 				list,
 				dfd,
 				self = this;
 
-			list = listService.data;
-			lat = storage.retrieve('location.lat');
-			long = storage.retrieve('location.long');
+			list 	= $rootScope.list;
+			lat 	= storage.retrieve('location.lat');
+			long 	= storage.retrieve('location.long');
 
 			dfd = $q.defer();
 
@@ -24,9 +23,8 @@ angular.module('App.Services').factory('sortService', function ($http, $q, stora
 				dfd.reject("there is no list data in teh list service variable");
 			}
 			$http({
-				url: '../../api/lists/sortList',
-				method: 'get',
-				params: {lat: lat, long: long, listid: list.attributes.id}
+				url: '../../api/lists/sort/' + lat + '/' + long,
+				method: 'GET'
 			})
 				.success(function (data) {
 					console.log(data);

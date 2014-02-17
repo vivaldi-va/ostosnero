@@ -1,7 +1,8 @@
 /**
  * controller for handling the user lists and related processes
  */
-mod.controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, $log, storage, listService, scroller, sync) {
+angular.module('App.Controllers')
+	.controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, $log, storage, listService, scroller, sync) {
 
 	$scope.location = $location.url();
 	$scope.errors 		= [];
@@ -76,8 +77,9 @@ mod.controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, $
 	}
 
 	$scope.changeQuantity = function(listItemId, quantDiff) {
+		$log.info('DEBUG:', "Change list item quantity", [listItemId, quantDiff]);
 		var quantity;
-		$rootScope.list.products[listItemId].quantity += quantDiff;
+		$rootScope.list.products[listItemId].quantity = parseInt($rootScope.list.products[listItemId].quantity) + quantDiff;
 		quantity = $rootScope.list.products[listItemId].quantity;
 		listService.changeQuantity(listItemId, quantity)
 			.then(

@@ -106,52 +106,6 @@ container.on('click', '.btn.menu', function(e){
 var page = $('.app-page'),
     trans = window.innerWidth-46,
     transString = 'translate3d(' + trans + 'px, 0, 0)';
-/*
- * swipe right to open menu
- */
-Hammer(document.getElementById('container')).on('swiperight', function(e) {
-    console.log('menu button clicked');
-    console.log(transString);
-    console.log(page);
-
-    if ($('.app-container .btn.menu').length > 0) {
-        if (isIE()) {
-            $('.app-page').css({
-                left: trans
-            });
-        } else {
-            $('.app-page').css({
-                '-webkit-transform': transString,
-                '-moz-transform': transString,
-                'transform': transString
-            });
-        }
-        $('.app-page').addClass('nav-active');
-    }
-});
-
-/*
- * swipe left to close menu again
- */
-Hammer(document.getElementById('container')).on('swipeleft', function(e) {
-    console.log('menu button clicked');
-    console.log();
-    if ($('.app-container .btn.menu').length > 0) {
-
-        if (isIE()) {
-            $('.app-page').css({
-                left: trans
-            });
-        } else {
-            $('.app-page').css({
-                '-webkit-transform': 'translate3d(0, 0, 0)',
-                '-moz-transform': 'translate3d(0, 0, 0)',
-                'transform': 'translate3d(0, 0, 0)'
-            });
-        }
-        $('.app-page').removeClass('nav-active');
-    }
-});
 
 container.on('click', '.switch-wrapper', function(e){
     e.preventDefault();

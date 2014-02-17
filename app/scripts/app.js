@@ -156,10 +156,8 @@ angular.module('ostosNero', [
  * waiting for data.
  */
 	.run(function ($rootScope, $location, $q, $http, $log, $accountsService, storage, locationService) {
-		console.log('run');
 		$rootScope.loaded = false;
-		var spinner,
-			loggedIn;
+		var spinner;
 
 		var spinnerOpts = {
 			lines: 12, // The number of lines to draw
@@ -226,8 +224,6 @@ angular.module('ostosNero', [
 				.then(
 					function () {
 
-
-
 						/**
 						 * if user is logged in, redirect them to their list(s)
 						 */
@@ -241,27 +237,14 @@ angular.module('ostosNero', [
 						 * once the login sequence has been completed, find the user's location.
 						 */
 
-						var pos = locationService.getCurrentLocation();
 						/*
 						 *  when the current location has been found (asynchronously as it happens)
 						 *  store the recovered latitude and longitude in the localstorage
 						 */
-						pos.then(
-							function (status) {
-								console.log(status);
-								storage.add('location.lat', status.coords.latitude);
-								locationService.location.latitude = status.coords.latitude;
-								storage.add('location.long', status.coords.longitude);
-								locationService.location.longitude = status.coords.longitude;
-							},
-							function (reason) {
-								console.log(reason);
-							}
-						);
+						locationService.getCurrentLocation();
 
 
 					}, function (reason) {
-						console.log('redir to root');
 						$location.path('/');
 						$log.warn('ERR:', 'check login failed: ', reason);
 						$rootScope.loaded = true;

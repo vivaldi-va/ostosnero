@@ -25,9 +25,9 @@
 			<div class="quantity-selector-wrapper" ng-show="inList">
 				<div class="quantity-selector">
 					<div class="quantity">{{ productInfo.quantity }}</div>
-					<button class="btn cta change-quant decrease" ng-click="decrease()"><i class="icon-minus"></i>
+					<button class="btn cta change-quant decrease" ng-click="changeQuantity(productInfo.list_item_id, -1)"><i class="icon-minus"></i>
 					</button>
-					<button class="btn cta change-quant increase" ng-click="increase()"><i class="icon-plus"></i>
+					<button class="btn cta change-quant increase" ng-click="changeQuantity(productInfo.list_item_id, 1)"><i class="icon-plus"></i>
 					</button>
 				</div>
 			</div>
