@@ -2,7 +2,7 @@
  * controller for handling the user lists and related processes
  */
 angular.module('App.Controllers')
-	.controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, $log, storage, listService, scroller, sync) {
+	.controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, $log, storage, listService, scroller) {
 
 	$scope.location = $location.url();
 	$scope.errors 		= [];
@@ -68,14 +68,6 @@ angular.module('App.Controllers')
 		}
 	};
 
-
-	function addQuant(listItemId, quantDefer) {
-		var quantity = $rootScope.list.products[listItemId].quantity;
-		quantity += quantDefer;
-		//listService.data.products[listItemId].quantity = quantity;
-		sync.quantity(listItemId, quantity);
-	}
-
 	$scope.changeQuantity = function(listItemId, quantDiff) {
 		$log.info('DEBUG:', "Change list item quantity", [listItemId, quantDiff]);
 		var quantity;
@@ -93,31 +85,6 @@ angular.module('App.Controllers')
 				}
 			);
 	};
-
-	$('#list-container').on('click', '.list-item-menu .add, .list-item-menu .remove', function (e) {
-		e.preventDefault();
-		console.log('clicking da add/remove button');
-	});
-	$('#list-container').on('click', '.list-item-menu .add', function (e) {
-		console.log('clicking da add button');
-		var listItemId;
-
-		listItemId = $(this).parent().data('id');
-		console.log(listItemId);
-		console.log(listService.data);
-		addQuant(listItemId, 1);
-
-	});
-	$('#list-container').on('click', '.list-item-menu .remove', function (e) {
-		console.log('clicking da remove button');
-		var listItemId;
-
-		listItemId = $(this).parent().data('id');
-		console.log(listItemId);
-		console.log(listService.data);
-		addQuant(listItemId, -1);
-
-	});
 
 	$scope.productInfo = function (listItemID) {
 		$location.url('/list/' + listItemID);

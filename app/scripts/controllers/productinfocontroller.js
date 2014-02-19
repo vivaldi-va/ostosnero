@@ -1,5 +1,5 @@
 angular.module('App.Controllers')
-	.controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $routeParams, $log, ProductService, storage, sync, spinner, listService, locationService, scroller) {
+	.controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $routeParams, $log, ProductService, spinner, listService, locationService, scroller) {
 	/**
 	 * Url structure: /#/product/:productID/
 	 *

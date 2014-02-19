@@ -14,32 +14,6 @@ angular.module('ostosNero', [
 		'App.Controllers',
 		'App.Services'
 	])
-
-
-	.factory('$checkout', function ($http, $q, listService) {
-		return {
-			checkoutProduct: function () {
-
-			}
-		}
-	})
-	.factory('sync', function ($http) {
-		return {
-			quantity: function (listItemID, quantity) {
-				$http({
-					url: '../../api/lists/setQuantity',
-					method: 'get',
-					params: {quantity: quantity, listid: parseInt(listItemID)}
-				})
-					.success(function (data) {
-						console.log(data);
-					})
-					.error(function (reason) {
-						console.warn(reason);
-					});
-			}
-		}
-	})
 	.factory('storage', function () {
 		return {
 			add: function (index, value) {
@@ -72,12 +46,6 @@ angular.module('ostosNero', [
 			}
 
 		};
-	})
-
-	.factory('searchService', function ($q, $http, storage) {
-		return {
-
-		}
 	})
 	.factory('scroller', function () {
 		return {
@@ -136,16 +104,6 @@ angular.module('ostosNero', [
 			},
 			stop: function () {
 				spinner.stop();
-			}
-		};
-	})
-	.factory('loading', function () {
-		return {
-			show: function () {
-
-			},
-			hide: function () {
-
 			}
 		};
 	})
