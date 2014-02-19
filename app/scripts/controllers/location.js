@@ -1,4 +1,4 @@
-angular.module('App.Controllers').controller('LocationCtrl', function($scope, $q, $http, $location, $log, storage, locationService) {
+angular.module('App.Controllers').controller('LocationCtrl', function($scope, $rootScope, $q, $http, $location, $log, storage, locationService) {
 
     $scope.page = {
         title: "Location"
@@ -32,7 +32,8 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $q
 		var term = $scope.locationTerm;
 
 		if (term.length > 0) {
-			term.split(/[ ]{1,}/).join('|');
+			$log.debug("Location search term", term);
+			term = term.split(/[ ]{1,}/).join('|');
 		} else {
 			$log.warn("missing location term");
 			$scope.errors.push("Nothing to search for");
@@ -40,12 +41,6 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $q
 
 		$location.path('/location/search/' + term);
 	};
-
-	if(window.localStorage && !!window.localStorage.savedLocations) {
-		$scope.chosenLocations = JSON.parse(window.localStorage.savedLocations);
-	} else {
-		$scope.chosenLocations = null;
-	}
 
 	$scope.getChosen = function() {
 		$scope.gettingLocations = true;
@@ -80,9 +75,6 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $q
 
         return hasLocation;
     }
-
-
-
 
 
 
@@ -130,10 +122,6 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $q
      * @private
      */
     function _getLocation() {
-		// TODO: remove jquery
-        $('.location-refresh').addClass('icon-spin');
-
-        console.log("do we have the location: " + _hasLocation());
 
         var pos =  locationService.getCurrentLocation();
         /*
@@ -141,17 +129,10 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $q
          *  store the recovered latitude and longitude in the localstorage
          */
 
-        console.log(pos);
         pos.then(
             function(status) {
-                console.log('promise received');
-                console.log(status);
-                storage.add('location.lat', status.coords.latitude);
-                storage.add('location.long', status.coords.longitude);
-                $('.chosen-location-icon').removeClass('error warn');
-
-
-
+				$rootScope.location.latitude 	= status.coords.latitude;
+				$rootScope.location.longitude 	= status.coords.longitude;
 
                 /*
                  * Once the lat and long has been found,
@@ -236,25 +217,22 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $q
 		);
 
 		$scope.getChosen();
-		return;
 	};
 
 })
 	.controller('LocationSearchCtrl', function($scope, $routeParams, $log, locationService) {
 		var term = $routeParams.term;
 
-
-
-
-
-		locationService.searchLocation(term).then(
-			function(data) {
-				$scope.locations = data;
-			},
-			function(reason) {
-				$scope.error = reason;
-			}
-		);
+		locationService.searchLocation(term)
+			.then(
+				function(data) {
+					$log.debug(data);
+					$scope.locations = data;
+				},
+				function(reason) {
+					$scope.error = reason;
+				}
+			);
 
 		// determine the logo asset to load based on chain name
 		$scope.logo = function(chain) {

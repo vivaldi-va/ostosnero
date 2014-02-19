@@ -13,9 +13,9 @@
 
 				<div class="list-item search-result" ng-class="{active: location.success}">
 					<a href="#/location/map/{{ location.latitude }}/{{ location.longitude }}">
-						<div class="list-item-thumb-wrapper"><img class="list-item-thumb" src="{{ logo(location.chain) }}" alt="{{location.name}}"/></div>
+						<div class="list-item-thumb-wrapper"><img class="list-item-thumb" src="{{ logo(location.shop_chain) }}" alt="{{location.name}}"/></div>
 						<div class="list-item-info-wrapper">
-							<div class="list-item-name"><strong>{{ location.name }}</strong> {{location.chain}}</div>
+							<div class="list-item-name"><strong>{{ location.shop_location }}</strong> {{location.shop_chain}}</div>
 							<div class="list-item-brand">{{ location.address }}</div>
 						</div>
 					</a>

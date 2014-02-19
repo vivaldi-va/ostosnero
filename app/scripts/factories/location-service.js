@@ -3,7 +3,7 @@
  */
 
 angular.module('App.Services')
-	.factory('locationService', function ($q, $http, $rootScope)
+	.factory('locationService', function ($q, $http, $rootScope, $log)
 	{
 		return {
 			init: function ()
@@ -63,9 +63,8 @@ angular.module('App.Services')
 			{
 				var dfd = $q.defer();
 				$http({
-					url: '../../api/getLocationInfo/',
-					method: 'get',
-					params: {lat: lat, long: long}
+					url: '../../api/location/info/' + lat + '/' + long,
+					method: 'get'
 				})
 					.success(function (data)
 					{
@@ -83,25 +82,23 @@ angular.module('App.Services')
 				var dfd = $q.defer();
 
 				$http({
-					url: "../../api/getSearchLocations",
-					method: "GET",
-					params: {term: term}
+					url: "../../api/location/search/" + term,
+					method: "GET"
 				})
 					.success(function (data)
 					{
-						console.log(data);
-						if (!!data.success) {
-							mixpanel.track("Location search", {
-								"term": term
-							});
-							dfd.resolve(data.data);
-						} else {
+						if (!data.success) {
 							dfd.reject(data.error);
 						}
+
+						mixpanel.track("Location search", {
+							"term": term
+						});
+						dfd.resolve(data.data);
 					})
 					.error(function (reason)
 					{
-						console.warn(reason);
+						$log.warn('ERR:', "location search failed ", reason);
 						dfd.reject(reason);
 					});
 
@@ -109,29 +106,22 @@ angular.module('App.Services')
 			},
 			addChosen: function (location)
 			{
-				var dfd = $q.defer(),
-					user;
-
-
-				if (!!localStorage.user) {
-					user = JSON.parse(localStorage.user);
-				}
+				var dfd = $q.defer();
 
 				$http({
-					url: '../../api/location/',
-					params: {user: user.email, query: 'save', id: location.id},
+					url: '../../api/location/add/' + location.id,
 					method: 'get'
 				})
 					.success(function (status)
 					{
-						if (!!status.error) {
-							mixpanel.track("Add location", {
-								"location_id": location.id
-							});
+						if (!status.success) {
 							dfd.reject(status.error);
-						} else {
-							dfd.resolve();
 						}
+
+						mixpanel.track("Add location", {
+							"location_id": location.id
+						});
+						dfd.resolve();
 					})
 					.error(function (reason)
 					{
@@ -142,22 +132,15 @@ angular.module('App.Services')
 			},
 			removeFromChosen: function (location)
 			{
-				var dfd = $q.defer(),
-					user;
-
-
-				if (!!localStorage.user) {
-					user = JSON.parse(localStorage.user);
-				}
+				var dfd = $q.defer();
 
 				$http({
-					url: '../../api/location/',
-					params: {user: user.email, query: 'removesaved', id: location.id},
+					url: '../../api/location/remove/' + location.id,
 					method: 'get'
 				})
 					.success(function (status)
 					{
-						if (!!status.error) {
+						if (!status.success) {
 							dfd.reject(status.error);
 						} else {
 							dfd.resolve();
@@ -171,22 +154,15 @@ angular.module('App.Services')
 				return dfd.promise;
 			},
 			getChosen: function() {
-				var dfd = $q.defer(),
-					user;
-
-
-				if (!!localStorage.user) {
-					user = JSON.parse(localStorage.user);
-				}
+				var dfd = $q.defer();
 
 				$http({
-					url: '../../api/location/',
-					params: {user: user.email, query: 'get'},
+					url: '../../api/location/saved',
 					method: 'get'
 				})
 					.success(function (data)
 					{
-						if (!!data.error) {
+						if (!data.success) {
 							dfd.reject(data.error);
 						} else {
 							dfd.resolve(data.data);
@@ -204,4 +180,4 @@ angular.module('App.Services')
 
 			}
 		};
-	})
+	});
