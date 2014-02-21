@@ -19,7 +19,8 @@
     "google-maps-utility-library-v3": "*",
     "angular-touch": "~1.2.0-rc.3",
     "angular-route": "~1.2.0-rc.3",
-    "AngularGM": "~0.3.1"
+    "AngularGM": "~0.3.1",
+    "angular-animate": "~1.2.13"
   },
   "devDependencies": {
     "angular-mocks": "~1.0.5",

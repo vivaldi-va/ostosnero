@@ -5,14 +5,17 @@
 angular.module('App.Routes', []);
 angular.module('App.Controllers', []);
 angular.module('App.Services', []);
+angular.module('App.Directives', []);
 
 angular.module('ostosNero', [
 		'AngularGM',
 		'ngTouch',
 		'ngRoute',
+		'ngAnimate',
 		'App.Routes',
 		'App.Controllers',
-		'App.Services'
+		'App.Services',
+		'App.Directives'
 	])
 	.factory('storage', function () {
 		return {

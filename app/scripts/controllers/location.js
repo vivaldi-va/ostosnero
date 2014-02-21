@@ -1,18 +1,20 @@
 angular.module('App.Controllers').controller('LocationCtrl', function($scope, $rootScope, $q, $http, $location, $log, storage, locationService) {
+    $log.debug('ROUTE:', "Location controller");
 
     $scope.page = {
         title: "Location"
     };
 
-	$scope.errors = [];
-    $log.info('ROUTE:', "Location controller");
-    $scope.currentLocation = "Fetching location...";
-	$scope.currentLocationEnabled = true;
-	$scope.locations = [];
-	$scope.gettingLocations = false;
+	$scope.errors 					= [];
+    $scope.currentLocation 			= "Fetching location...";
+    $scope.gettingCurrentLocation	= true;
+	$scope.currentLocationEnabled 	= true;
+	$scope.locations 				= [];
+	$scope.gettingLocations 		= false;
 
 	locationService.getCurrentLocation().then(
 		function(position) {
+			$scope.gettingCurrentLocation = false;
 			$scope.currentCoords = {lat:position.coords.latitude, long:position.coords.longitude};
 			console.log($scope.currentCoords);
 		}

@@ -5,8 +5,14 @@ angular.module('App.Controllers')
 	.controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, $log, storage, listService, scroller) {
 
 	$scope.location = $location.url();
-	$scope.errors 		= [];
+	$scope.errors 		= ['error'];
 	$scope.successes 	= [];
+
+	$scope.error = {
+		"type": "warning",
+		"message": "comes from controller crap"
+	};
+
 
 	NProgress.start();
 
