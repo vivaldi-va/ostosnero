@@ -2,16 +2,20 @@
  * controller for handling the user lists and related processes
  */
 angular.module('App.Controllers')
-	.controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, $log, storage, listService, scroller) {
+	.controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, $log, $timeout, storage, listService, scroller, AlertService) {
 
 	$scope.location = $location.url();
 	$scope.errors 		= ['error'];
 	$scope.successes 	= [];
+	/*	$rootScope.error 		= false;
 
-	$scope.error = {
-		"type": "warning",
-		"message": "comes from controller crap"
-	};
+	$timeout(function() {
+		$rootScope.error = {
+			"type": "warning",
+			"message": "comes from controller crap"
+		};
+		$log.debug('DEBUG:', "error should appear");
+	}, 1000);*/
 
 
 	NProgress.start();
@@ -60,6 +64,7 @@ angular.module('App.Controllers')
 			},
 			function(reason) {
 				NProgress.done();
+				AlertService.set('error', "couldn't  get your list, try again");
 				console.log("couldnt get list: " + reason);
 			});
 	};
@@ -82,12 +87,14 @@ angular.module('App.Controllers')
 		listService.changeQuantity(listItemId, quantity)
 			.then(
 				function(success) {
-					$scope.successes.push("Quantity changed");
+					//$scope.successes.push("Quantity changed");
+					AlertService.set('success', "quantity changed to " + quantity);
 				},
 				function(reason) {
 					// TODO: make errors relate to reason's error message
 					$log.warn('ERR: "Quantity change failed', reason);
-					$scope.errors.push("Could not change quantity");
+					//$scope.errors.push("Could not change quantity");
+					AlertService.set('warning', "could not change quantity");
 				}
 			);
 	};
@@ -110,7 +117,7 @@ angular.module('App.Controllers')
 	 */
 	$scope.removeFromList = function (listItemId, element) {
 		delete $rootScope.list.products[listItemId];
-
+		AlertService.set('info', "removed '" + element.product_name + "'");
 		listService.removeFromList(listItemId)
 			.then(function() {
 				$scope.getLists();
