@@ -40,9 +40,9 @@ $height: 20px;
 	}
 
 	&.ng-leave {
-		-webkit-animation: alert-appear 0.25s 1;
-		-moz-animation: alert-appear 0.25s 1;
-		animation:  alert-appear 0.25s 1;
+		-webkit-animation: alert-disappear 0.25s 1;
+		-moz-animation: alert-disappear 0.25s 1;
+		animation:  alert-disappear 0.25s 1;
 	}
 }
 
