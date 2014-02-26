@@ -4,8 +4,8 @@
 angular.module('App.Controllers')
 	.controller('ListCtrl', function ($q, $http, $rootScope, $scope, $location, $log, $timeout, storage, listService, scroller, AlertService) {
 
-	$scope.location = $location.url();
-	$scope.errors 		= ['error'];
+	$scope.location 	= $location.url();
+	$rootScope.alert 	= false;
 	$scope.successes 	= [];
 	/*	$rootScope.error 		= false;
 

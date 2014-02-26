@@ -1,5 +1,5 @@
 angular.module('App.Controllers')
-	.controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $routeParams, $log, ProductService, spinner, listService, locationService, scroller) {
+	.controller('ProductPageCtrl', function ($scope, $rootScope, $http, $q, $routeParams, $log, ProductService, spinner, listService, locationService, scroller, AlertService) {
 	/**
 	 * Url structure: /#/product/:productID/
 	 *
@@ -16,7 +16,7 @@ angular.module('App.Controllers')
 	 * maybe.
 	 */
 
-	$scope.errors 		= [];
+	$rootScope.alert	= false;
 	$scope.successes 	= [];
 
 	$scope.$on('$viewContentLoaded', function () {
@@ -85,7 +85,7 @@ angular.module('App.Controllers')
 			//spinner.stop();
 			NProgress.done();
 			$scope.prices = [];
-			console.log(prices);
+			$log.debug('Product Info', "local prices", prices);
 			$scope.prices = prices;
 			for (var p in prices) {
 				$scope.placeholder = "";
@@ -108,10 +108,12 @@ angular.module('App.Controllers')
 		listService.addToList(productID)
 			.then(function (status) {
 				$scope.isAddingProduct = false;
+				AlertService.set('success', "product added to list");
 			},
 			function (reason) {
 				$scope.isAddingProduct = false;
 				$log.warn("ERR:", "Adding product failed", reason);
+				AlertService.set('warning', "product could not be added");
 			});
 	};
 
@@ -120,10 +122,12 @@ angular.module('App.Controllers')
 		price.waiting = true;
 		ProductService.updatePrice(productID, price.shop_id, price.price)
 			.then(function (status) {
+				AlertService.set('success', "Price updated");
 				price.updated = true;
 				price.waiting = false;
 			},
 			function (reason) {
+				if(reason==='SERVER_ERROR') AlertService.set('error', "server failed to update price");
 				$log.warn('ERR:', "Updating product price failed", reason);
 			}
 		);
@@ -137,12 +141,13 @@ angular.module('App.Controllers')
 		listService.changeQuantity(listItemId, quantity)
 			.then(
 			function(success) {
-				$scope.successes.push("Quantity changed");
+				AlertService.set('success', "quantity changed to " + quantity);
 			},
 			function(reason) {
 				// TODO: make errors relate to reason's error message
 				$log.warn('ERR: "Quantity change failed', reason);
-				$scope.errors.push("Could not change quantity");
+				//$scope.errors.push("Could not change quantity");
+				AlertService.set('warning', "could not change quantity");
 			}
 		);
 	};

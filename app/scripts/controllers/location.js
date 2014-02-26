@@ -1,4 +1,4 @@
-angular.module('App.Controllers').controller('LocationCtrl', function($scope, $rootScope, $q, $http, $location, $log, storage, locationService) {
+angular.module('App.Controllers').controller('LocationCtrl', function($scope, $rootScope, $q, $http, $location, $log, storage, locationService, AlertService) {
     $log.debug('ROUTE:', "Location controller");
 
     $scope.page = {
@@ -38,7 +38,9 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $r
 			term = term.split(/[ ]{1,}/).join('|');
 		} else {
 			$log.warn("missing location term");
-			$scope.errors.push("Nothing to search for");
+			//$scope.errors.push("Nothing to search for");
+			AlertService.set('info', "nothing to search for");
+
 		}
 
 		$location.path('/location/search/' + term);
@@ -54,7 +56,8 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $r
 			},
 			function(reason) {
 				$scope.gettingLocations = false;
-				$scope.errors.push(reason);
+				//$scope.errors.push(reason);
+				AlertService.set('warning', reason);
 			}
 		);
 	};
@@ -222,7 +225,7 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $r
 	};
 
 })
-	.controller('LocationSearchCtrl', function($scope, $routeParams, $log, locationService) {
+	.controller('LocationSearchCtrl', function($scope, $routeParams, $log, locationService, AlertService) {
 		var term = $routeParams.term;
 
 		locationService.searchLocation(term)
@@ -232,7 +235,7 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $r
 					$scope.locations = data;
 				},
 				function(reason) {
-					$scope.error = reason;
+					AlertService.set('warning', reason);
 				}
 			);
 
@@ -311,7 +314,8 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $r
 					location.busy = false;
 				},
 				function(reason) {
-					$scope.errors.push(reason);
+					//$scope.errors.push(reason);
+					AlertService.set('warning', reason);
 					location.busy = false;
 				}
 			);

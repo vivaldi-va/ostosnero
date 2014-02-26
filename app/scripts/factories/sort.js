@@ -19,7 +19,7 @@ angular.module('App.Services').factory('sortService', function ($http, $q, $root
 
 			dfd = $q.defer();
 
-			if (list.attributes.id === null) {
+			if (!list) {
 				dfd.reject("there is no list data in teh list service variable");
 			}
 			$http({

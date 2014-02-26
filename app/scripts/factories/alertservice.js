@@ -5,14 +5,14 @@
 angular.module('App.Services')
 	.factory('AlertService', function($rootScope) {
 		// reset error just because
-		$rootScope.error = false;
+		$rootScope.alert = false;
 
 		function _setError(type, message) {
-			$rootScope.error = {"type": type, "message": message};
+			$rootScope.alert = {"type": type, "message": message};
 		}
 
 		function _clearError() {
-			$rootScope.error = false;
+			$rootScope.alert = false;
 		}
 
 		return {

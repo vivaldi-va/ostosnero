@@ -6,7 +6,7 @@
         <div class="page-title">Paikannus</div>
     </div>
     <div class="app-content content-view darker" id="listElement">
-
+		<div on-alert error="error"></div>
         <div class="input-icon input-dropdown location-search-wrapper">
 			<form ng-submit="searchLocation()">
 				<i class="icon-location-arrow"></i>
@@ -63,14 +63,14 @@
 
             </div>
         </div>
-		<div class="alert" ng-if="errors.length">
+		<!--<div class="alert" ng-if="errors.length">
 			<a class="close" ng-click="$close()">&times;</a>
 
 			<h3>Alert</h3>
 			<div ng-repeat="error in errors">
 				{{ error }}
 			</div>
-		</div>
+		</div>-->
         <!--<div class="loading" ng-hide=""><i class="icon-ellipsis-horizontal"></i></div>-->
     </div>
 
