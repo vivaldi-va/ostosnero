@@ -23,7 +23,7 @@
 
 
                 <div class="list-item icon chosen-location current-location" ng-click="openMap()">
-                    <div class="list-item-icon chosen-location-icon">
+                    <div class="list-item-icon chosen-location-icon" ng-class="{error: locationError==='error',warning: locationError==='warning'}">
                         <i class="icon-map-marker"></i>
                     </div>
                     <div class="list-item-text">

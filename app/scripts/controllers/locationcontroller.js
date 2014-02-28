@@ -7,10 +7,11 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $r
 
 	$scope.errors 					= [];
     $scope.currentLocation 			= "Fetching location...";
-    $scope.gettingCurrentLocation	= true;
+    $scope.gettingCurrentLocation	= false;
 	$scope.currentLocationEnabled 	= true;
 	$scope.locations 				= [];
 	$scope.gettingLocations 		= false;
+	$scope.locationError			= false;
 
 	locationService.getCurrentLocation().then(
 		function(position) {
@@ -74,7 +75,7 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $r
     function _hasLocation() {
         var hasLocation = false;
 
-        if (storage.retrieve('location.lat') && storage.retrieve('location.long')) {
+        if ($rootScope.location.latitude && $rootScope.location.longitude) {
             hasLocation = true;
         }
 
@@ -91,8 +92,8 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $r
      */
     function _initCurrentLocation() {
         if (_hasLocation()) {
-            var addressPromise = locationService.getAddress(storage.retrieve('location.lat'), storage.retrieve('location.long'));
-
+            var addressPromise = locationService.getAddress($rootScope.location.latitude, $rootScope.location.longitude);
+			$scope.gettingCurrentLocation = true;
             /*
              * Once the lat and long has been found,
              * use those values to find the street address using google's location api.
@@ -103,11 +104,11 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $r
                     $scope.currentLocation = address;
                     locationService.location.string = address;
                     console.log();
-                    $('.location-refresh').removeClass('icon-spin');
+					$scope.gettingCurrentLocation = false;
 
                 },
                 function(reason) {
-                    $('.location-refresh').removeClass('icon-spin');
+					$scope.gettingCurrentLocation = false;
                     console.log(reason);
                 }
             );
@@ -163,21 +164,21 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $r
             function(reason) {
                 console.log(reason);
                 console.log('promise fail reason received');
-                $('.location-refresh').removeClass('icon-spin');
+				$scope.gettingCurrentLocation = false;
                 switch (reason.code) {
 					case 1:
                         // permission denied TODO: de-jquery it
-                        $('.chosen-location-icon').addClass('warn');
+                        $scope.locationError = 'warning';
                         $scope.currentLocation = "Location services not allowed";
                         break;
                     case 2:
                         // position unavailable TODO: de-jquery it
-                        $('.chosen-location-icon').addClass('error');
+						$scope.locationError = 'error';
                         $scope.currentLocation = "Could not find location";
                         break;
                     case 3:
                         // Timeout TODO: de-jquery it
-                        $('.chosen-location-icon').addClass('error');
+						$scope.locationError = 'error';
                         $scope.currentLocation = "Could not find location";
                         break;
 
