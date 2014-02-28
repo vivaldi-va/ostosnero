@@ -20,13 +20,12 @@ angular.module('App.Controllers')
 		var dfd = $q.defer();
 
 		$http({
-			url: '../../api/getClosestShops',
-			method: 'get',
-			params: {lat: lat, long: long, num: 100}
+			url: '../../api/location/' + lat + '/' + long,
+			method: 'get'
 		})
 			.success(function (stores)
 			{
-				dfd.resolve(stores);
+				dfd.resolve(stores.data);
 			})
 			.error(function (reason)
 			{
@@ -36,13 +35,12 @@ angular.module('App.Controllers')
 	}
 
 
-	function buildMarkers(status)
-	{
+	function buildMarkers(status) {
 		var markers = [];
 		var shopsArray = [];
 
 
-		for (var shop = 0; shop < status.length; shop++) {
+		for (var shop in status) {
 			shopsArray.push(shop);
 			//var shop = status[shop];
 
@@ -56,7 +54,7 @@ angular.module('App.Controllers')
 			var pinColour = "FE7569";
 			var pinTextColour = "333333";
 
-			switch (status[shop].chainName.toLowerCase()) {
+			switch (status[shop].shop_chain.toLowerCase()) {
 				case 'alepa':
 					pinText = "a";
 					pinColour = "FFEC01";

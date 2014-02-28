@@ -15,7 +15,7 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $r
 	locationService.getCurrentLocation().then(
 		function(position) {
 			$scope.gettingCurrentLocation = false;
-			$scope.currentCoords = {lat:position.coords.latitude, long:position.coords.longitude};
+			$rootScope.location = {latitude:position.coords.latitude, longitude:position.coords.longitude};
 			console.log($scope.currentCoords);
 		}
 	);
@@ -25,7 +25,7 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $r
 		if(!!location) {
 			$location.path('/location/map/' + location.latitude + '/' + location.longitude);
 		} else {
-			$location.path('/location/map/' + $scope.currentCoords.lat + '/' + $scope.currentCoords.long);
+			$location.path('/location/map/' + $scope.location.latitude + '/' + $scope.location.longitude);
 		}
 	};
 
@@ -134,6 +134,8 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $r
          *  store the recovered latitude and longitude in the localstorage
          */
 
+		$scope.gettingCurrentLocation = true;
+
         pos.then(
             function(status) {
 				$rootScope.location.latitude 	= status.coords.latitude;
@@ -149,11 +151,11 @@ angular.module('App.Controllers').controller('LocationCtrl', function($scope, $r
                         console.log(address);
                         $scope.currentLocation = address;
 
-                        $('.location-refresh').removeClass('icon-spin');
+						$scope.gettingCurrentLocation = false;
 
                     },
                     function(reason) {
-                        $('.location-refresh').removeClass('icon-spin');
+						$scope.gettingCurrentLocation = false;
                         console.log(reason);
                     }
                 );
