@@ -32,7 +32,7 @@
                     </div>
                     <div class="interaction-wrapper">
 
-                        <div class="interaction list-item-button location-refresh" ng-click="refreshLocation();$event.stopPropagation()"><i class="icon-refresh" ng-class="{'icon-spin': gettingCurrentLocation}"></i></div>
+                        <div class="interaction list-item-button location-refresh" ng-click="refreshLocation();$event.stopPropagation()"><i class="icon-refresh" ng-class="{'icon-spin': gettingCurrentLocation===true}"></i></div>
 
                         <div class="interaction switch-wrapper current-location-toggle" ng-class="{on: !!currentLocationEnabled}" ng-click="toggleCurrentLocation();$event.stopPropagation()">
                             <div class="switch">
